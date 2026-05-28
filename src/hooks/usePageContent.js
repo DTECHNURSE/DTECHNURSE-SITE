@@ -50,15 +50,19 @@ export function usePageContent(pageKey) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+    setContent(DEFAULTS[pageKey]);
     if (!db) { setLoading(false); return; }
     const ref = doc(db, 'sitePages', pageKey);
     getDoc(ref).then(snap => {
       if (snap.exists()) {
-        // Merge with defaults so missing fields never cause blank pages
         setContent({ ...DEFAULTS[pageKey], ...snap.data() });
       }
       setLoading(false);
-    }).catch(() => setLoading(false));
+    }).catch(() => {
+      setContent(DEFAULTS[pageKey]);
+      setLoading(false);
+    });
   }, [pageKey]);
 
   return { content, loading };
