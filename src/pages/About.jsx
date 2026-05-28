@@ -40,7 +40,7 @@ export default function About() {
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 mt-16">
-          {content.cards.map((card, i) => {
+          {(content.cards || []).map((card, i) => {
             const Icon = ICONS[i] || Target;
             return (
               <motion.div

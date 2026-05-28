@@ -53,10 +53,7 @@ export function usePageContent(pageKey) {
     if (!db) { setLoading(false); return; }
     const ref = doc(db, 'sitePages', pageKey);
     getDoc(ref).then(snap => {
-      if (snap.exists()) {
-        // Merge with defaults so missing fields never cause blank pages
-        setContent({ ...DEFAULTS[pageKey], ...snap.data() });
-      }
+      if (snap.exists()) setContent(snap.data());
       setLoading(false);
     }).catch(() => setLoading(false));
   }, [pageKey]);
