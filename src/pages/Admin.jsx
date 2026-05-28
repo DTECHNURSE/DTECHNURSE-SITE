@@ -243,14 +243,37 @@ function RichToolbar({ editorRef, isHtmlView, onToggleHtml, wordCount }) {
 // ─── Pages Editor ───────────────────────────────────────────────────────────
 function PagesEditor({ user }) {
   const [activePage, setActivePage] = useState('privacy');
-  const { content: loaded, loading } = usePageContent(activePage);
   const [form, setForm] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!loading) setForm(JSON.parse(JSON.stringify(loaded)));
-  }, [loaded, loading, activePage]);
+    let cancelled = false;
+    setForm(null);
+    setLoading(true);
+    const run = async () => {
+      try {
+        const base = JSON.parse(JSON.stringify(DEFAULTS[activePage]));
+        if (db) {
+          const snap = await getDoc(doc(db, 'sitePages', activePage));
+          if (!cancelled && snap.exists()) {
+            setForm({ ...base, ...snap.data() });
+          } else if (!cancelled) {
+            setForm(base);
+          }
+        } else if (!cancelled) {
+          setForm(base);
+        }
+      } catch {
+        if (!cancelled) setForm(JSON.parse(JSON.stringify(DEFAULTS[activePage])));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    run();
+    return () => { cancelled = true; };
+  }, [activePage]);
 
   const handleSave = async () => {
     setSaving(true);
