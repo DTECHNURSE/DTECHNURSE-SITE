@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { addDoc, collection, serverTimestamp, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, getDocs, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import {
   Loader2, Save, LinkIcon, Bold, Italic, List, Image as ImageIcon, LogOut,
